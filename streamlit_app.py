@@ -11,7 +11,6 @@ APP_DIR = Path(__file__).parent
 ASSETS = APP_DIR / "assets"
 GIF_SUCCESS = ASSETS / "success.gif"
 GIF_LOSER = ASSETS / "loser.gif"
-#GIF_NICE  = ASSETS / "nice.gif"
 
 def show_gif(path):
     if path.exists():
@@ -22,6 +21,19 @@ def show_gif(path):
 DATABASE_PATH = "./all_data/"
 
 API_URL = st.secrets["api_url"]
+
+
+############################ FONT SIZE ############################
+
+st.markdown("""
+<style>
+/* Increase font size inside Streamlit alert boxes */
+div.stAlert, div.stAlert p {
+  font-size: 1.4rem;   /* ~20px; adjust as needed */
+  line-height: 1.4;
+}
+</style>
+""", unsafe_allow_html=True)
 
 ############################ HEADING ############################
 
@@ -65,6 +77,88 @@ spinning_basketballs(n=1, size_px=100)
 
 st.markdown("# What is your NBA dream team?")
 
+st.markdown("")
+
+st.markdown("### Team examples")
+
+st.session_state["preselect_team"] = {
+    "C": {
+        "team": 0,
+        "player": 0
+    },
+    "SG": {
+        "team": 0,
+        "player": 0
+    },
+    "PF": {
+        "team": 0,
+        "player": 0
+    },
+    "PG": {
+        "team": 0,
+        "player": 0
+    },
+    "SF": {
+        "team": 0,
+        "player": 0
+    }
+}
+
+col_weak, col_average = st.columns([1, 2], vertical_alignment="center")
+
+with col_weak:
+    if st.button("'Weak' team"):
+        st.session_state["preselect_team"] = {
+            "C": {
+                "team": 9,
+                "player": 1
+            },
+            "SG": {
+                "team": 17,
+                "player": 6
+            },
+            "PF": {
+                "team": 3,
+                "player": 0
+            },
+            "PG": {
+                "team": 28,
+                "player": 1
+            },
+            "SF": {
+                "team": 10,
+                "player": 1
+            }
+        }
+
+with col_average:
+    if st.button("'Average' team"):
+        st.session_state["preselect_team"] = {
+            "C": {
+                "team": 7,
+                "player": 2
+            },
+            "SG": {
+                "team": 23,
+                "player": 2
+            },
+            "PF": {
+                "team": 16,
+                "player": 1
+            },
+            "PG": {
+                "team": 20,
+                "player": 0
+            },
+            "SF": {
+                "team": 24,
+                "player": 1
+            }
+        }
+
+st.markdown("")
+st.markdown("### Build your dream team ! 🏀")
+
 ############################ DROPDOWNS ############################
 
 @st.cache_data
@@ -77,7 +171,7 @@ def team_player_picker(df: pd.DataFrame, pos_label: str, key_prefix: str):
 
     col_team, col_player = st.columns([1, 2], vertical_alignment="center")
     with col_team:
-        team = st.selectbox(f"{pos_label} — Team", teams, key=f"{key_prefix}_team")
+        team = st.selectbox(f"{pos_label} — Team", teams, key=f"{key_prefix}_team", index=st.session_state["preselect_team"][key_prefix]["team"])
 
     # Players filtered by the selected team
     players = (
@@ -89,7 +183,7 @@ def team_player_picker(df: pd.DataFrame, pos_label: str, key_prefix: str):
 
     # Key depends on team so the player box resets when team changes
     with col_player:
-        player = st.selectbox(f"{pos_label} — Player", players, key=f"{key_prefix}_player_{team}")
+        player = st.selectbox(f"{pos_label} — Player", players, key=f"{key_prefix}_player_{team}", index=st.session_state["preselect_team"][key_prefix]["player"])
 
     return player, team
 
@@ -121,32 +215,32 @@ selected_dream_team = get_select_dream_team()
 
 # # BUTTON
 
-if st.button('Will you win the next NBA season?'):
+if st.button("Get my dream teams' winning rate", icon= "🌟"):
 
     response = requests.post(API_URL, json = selected_dream_team)
 
 
     if float(response.text) <= 0.3:
 
-        st.error(f"Loser team - your probability to win the 2026 season is between {int(float(response.text)*0.90*100)} % and {int(float(response.text)*1.1*100)} % 🫠")
+        st.error(f"Loser team - probability to win is between **{int(float(response.text)*100)}** % 🫠")
 
         show_gif(GIF_LOSER)
 
     elif float(response.text) > 1:
 
-        st.success(f"🔥 🎉 Dream team - your probability to win the 2026 season is between 90% and 99% 🔥 🎉")
+        st.success(f"🔥 🎉 Dream team - probability to win is 99% 🔥 🎉")
 
         show_gif(GIF_SUCCESS)
 
     elif float(response.text) >= 0.95:
 
-        st.success(f"🔥 🎉 Dream team - your probability to win the 2026 season is between {int(float(response.text)*0.9*100)} % and {int(float(response.text)*1.1*100)} %  🔥 🎉")
+        st.success(f"🔥 🎉 Dream team - probability to win is **{int(float(response.text)*100)}** %  🔥 🎉")
 
         show_gif(GIF_SUCCESS)
 
     elif float(response.text) >= 0.65:
 
-        st.success(f"Nice team - your probability to win the 2026 season is between {int(float(response.text)*0.9*100)} % and {int(float(response.text)*1.1*100)} %  🔥 🎉")
+        st.success(f"Nice team - probability to win is **{int(float(response.text)*100)}** %  🔥 🎉")
 
     else:
-        st.warning(f"Average team - your probability to win the 2026 season is between {int(float(response.text)*0.9*100)} % and {int(float(response.text)*1.1*100)} % 🫤")
+        st.warning(f"Average team - probability to win is **{int(float(response.text)*100)}** % 🫤")
