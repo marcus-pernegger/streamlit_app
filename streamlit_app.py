@@ -134,7 +134,7 @@ if st.button('Will you win the next NBA season?'):
 
     elif float(response.text) > 1:
 
-        st.success(f"🔥 🎉 Dream team - your probability to win the 2026 season is between 95% and 99% 🔥 🎉")
+        st.success(f"🔥 🎉 Dream team - your probability to win the 2026 season is between 90% and 99% 🔥 🎉")
 
         show_gif(GIF_SUCCESS)
 
