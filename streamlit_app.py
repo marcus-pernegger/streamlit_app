@@ -81,28 +81,29 @@ st.markdown("")
 
 st.markdown("### Team examples")
 
-st.session_state["preselect_team"] = {
-    "C": {
-        "team": 0,
-        "player": 0
-    },
-    "SG": {
-        "team": 0,
-        "player": 0
-    },
-    "PF": {
-        "team": 0,
-        "player": 0
-    },
-    "PG": {
-        "team": 0,
-        "player": 0
-    },
-    "SF": {
-        "team": 0,
-        "player": 0
+if "preselect_team" not in st.session_state:
+    st.session_state["preselect_team"] = {
+        "C": {
+            "team": 0,
+            "player": 0
+        },
+        "SG": {
+            "team": 0,
+            "player": 0
+        },
+        "PF": {
+            "team": 0,
+            "player": 0
+        },
+        "PG": {
+            "team": 0,
+            "player": 0
+        },
+        "SF": {
+            "team": 0,
+            "player": 0
+        }
     }
-}
 
 col_weak, col_average = st.columns([1, 2], vertical_alignment="center")
 
@@ -132,7 +133,7 @@ with col_weak:
         }
 
 with col_average:
-    if st.button("'Average' team"):
+    if st.button("'Best' team"):
         st.session_state["preselect_team"] = {
             "C": {
                 "team": 7,
@@ -152,7 +153,7 @@ with col_average:
             },
             "SF": {
                 "team": 24,
-                "player": 1
+                "player": 0
             }
         }
 
