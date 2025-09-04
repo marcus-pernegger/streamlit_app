@@ -2,6 +2,20 @@ import streamlit as st
 import pandas as pd
 import requests
 import json
+from pathlib import Path
+
+
+############################ GIFs ############################
+
+APP_DIR = Path(__file__).parent
+ASSETS = APP_DIR / "assets"
+GIF_SUCCESS = ASSETS / "success.gif"
+GIF_LOSER = ASSETS / "loser.gif"
+#GIF_NICE  = ASSETS / "nice.gif"
+
+def show_gif(path):
+    if path.exists():
+        st.image(str(path), use_container_width=True)
 
 ############################ CONSTANTS ############################
 
@@ -112,11 +126,27 @@ if st.button('Will you win the next NBA season?'):
     response = requests.post(API_URL, json = selected_dream_team)
 
 
-    if float(response.text) > 0.3:
+    if float(response.text) <= 0.3:
 
-        st.success(f"Super team - you are likely to win the season by {response.text}  🔥 🎉")
+        st.error(f"Loser team - your probability to win the 2026 season is between {int(float(response.text)*0.90*100)} % and {int(float(response.text)*1.1*100)} % 🫠")
 
-        st.balloons()
+        show_gif(GIF_LOSER)
+
+    elif float(response.text) > 1:
+
+        st.success(f"🔥 🎉 Dream team - your probability to win the 2026 season is between 95% and 99% 🔥 🎉")
+
+        show_gif(GIF_SUCCESS)
+
+    elif float(response.text) >= 0.95:
+
+        st.success(f"🔥 🎉 Dream team - your probability to win the 2026 season is between {int(float(response.text)*0.9*100)} % and {int(float(response.text)*1.1*100)} %  🔥 🎉")
+
+        show_gif(GIF_SUCCESS)
+
+    elif float(response.text) >= 0.65:
+
+        st.success(f"Nice team - your probability to win the 2026 season is between {int(float(response.text)*0.9*100)} % and {int(float(response.text)*1.1*100)} %  🔥 🎉")
 
     else:
-        st.error(f"Loser team - you are likely to win the season only by {response.text}  🫠")
+        st.warning(f"Average team - your probability to win the 2026 season is between {int(float(response.text)*0.9*100)} % and {int(float(response.text)*1.1*100)} % 🫤")
