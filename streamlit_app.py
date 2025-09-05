@@ -188,7 +188,10 @@ def team_player_picker(df: pd.DataFrame, pos_label: str, key_prefix: str):
 
     with col_image:
         image_path = f"headshots/{player}.png"
-        st.image(image_path, caption=f"{player}", use_container_width=True)
+        shadow_path = f"headshots/Shadow_player.png"
+        try :
+            st.image(image_path, caption=f"{player}", use_container_width=True)
+        except: st.image(shadow_path, caption=f"No image", use_container_width=True)
 
     return player, team
 
