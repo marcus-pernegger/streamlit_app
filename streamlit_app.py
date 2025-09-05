@@ -170,7 +170,7 @@ def team_player_picker(df: pd.DataFrame, pos_label: str, key_prefix: str):
     """Render two selectboxes side-by-side: Team (left) -> Player (right)."""
     teams = sorted(df["team"].unique())
 
-    col_team, col_player = st.columns([1, 2], vertical_alignment="center")
+    col_team, col_player, col_image = st.columns([1, 1.5, 0.5], vertical_alignment="center")
     with col_team:
         team = st.selectbox(f"{pos_label} — Team", teams, key=f"{key_prefix}_team", index=st.session_state["preselect_team"][key_prefix]["team"])
 
@@ -185,6 +185,10 @@ def team_player_picker(df: pd.DataFrame, pos_label: str, key_prefix: str):
     # Key depends on team so the player box resets when team changes
     with col_player:
         player = st.selectbox(f"{pos_label} — Player", players, key=f"{key_prefix}_player_{team}", index=st.session_state["preselect_team"][key_prefix]["player"])
+
+    with col_image:
+        image_path = f"headshots/{player}.png"
+        st.image(image_path, caption=f"{player}", use_container_width=True)
 
     return player, team
 
